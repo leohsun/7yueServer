@@ -22,5 +22,7 @@ module.exports = [
         plugin: require('./routes/like')
     }, {
         plugin: require('./routes/comment')
+    }, {
+        plugin: require('./routes/init')
     }
 ]

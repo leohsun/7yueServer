@@ -60,7 +60,7 @@ const path = require('path');
 
     await browser.close();
 
-    const p = path.resolve(__dirname, './data.json');
+    const p = path.resolve(__dirname, './bookData.json');
     await fs.writeFile(p,JSON.stringify(infoArr))
 
     console.log('____写入文件完成...,path: ' + p);

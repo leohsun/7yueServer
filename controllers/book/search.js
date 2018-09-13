@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var data = require('../../spider/data.json');
 var Boom = require('boom');
 module.exports = {
     description: 'book search list api',
