@@ -5,7 +5,7 @@ const periodicalData = require('../spider/periodical.json');
 module.exports = {
     description: 'init mongodb data  api',
     handler: async function (request, h) {
-        const {key} = request.query;
+        const {key} = request.url.query;
         if (key !== 'plzinitmongodb') {
             throw Boom.unauthorized('you are not the amdin, do not do this')
         }
