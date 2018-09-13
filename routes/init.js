@@ -10,7 +10,7 @@ plugin.register = function (server, options) {
     server.route([
         {
             method: 'GET',
-            path: '/init',
+            path: '/7yue/init',
             config: Controllers.init
         }
     ])
