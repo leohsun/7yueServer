@@ -1,6 +1,4 @@
 var mongoose = require('mongoose');
-var baseURL = require('../../config').baseURL;
-// var datas = require('../../periodical.json');
 var Boom = require('boom');
 module.exports = {
     description: 'periodical list api',
