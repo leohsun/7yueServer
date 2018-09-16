@@ -7,16 +7,16 @@ module.exports = {
         const idx = +request.url.query.index || 'latest'
         const Periodical = mongoose.model('Periodical');
         const periodical_list = idx !== 'latest' ? await Periodical.findOne({ index: idx }) : await Periodical.find().sort({ index: -1 });
-        const { type, content, index, title,image } = periodical_list[0];
+        const { type, content, index, title, image, _id } = periodical_list[0];
         const preIdx = index - 1;
         const nextIdx = index + 1;
-        const previours = await Periodical.findOne({index: preIdx});
-        const next = await Periodical.findOne({index: nextIdx});
+        const previours = await Periodical.findOne({ index: preIdx });
+        const next = await Periodical.findOne({ index: nextIdx });
         const Like = mongoose.model('Like');
         const fav_nums = await Like.find({ periodicalId: _id }).countDocuments();
         const like_status = await Like.find({ '$and': [{ periodicalId: _id }, { userId }] }).countDocuments();
         const data = {
-            data :{ type, content, index, title,image, fav_nums, like_status, previours, next }
+            data: { type, content, index, title, image, fav_nums, like_status, previours, next }
         }
 
 
