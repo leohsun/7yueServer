@@ -6,7 +6,7 @@ module.exports = {
         const userId = request.headers.appkey || 0;
         const idx = +request.url.query.index || 'latest'
         const Periodical = mongoose.model('Periodical');
-        const periodical_list = idx !== 'latest' ? await Periodical.findOne({ index: idx }) : await Periodical.find().sort({ index: -1 });
+        const periodical_list = idx !== 'latest' ? await Periodical.find({ index: idx }) : await Periodical.find().sort({ index: -1 });
         const { type, content, index, title, image, _id } = periodical_list[0];
         const preIdx = index - 1;
         const nextIdx = index + 1;
