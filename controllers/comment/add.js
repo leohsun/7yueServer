@@ -6,17 +6,16 @@ module.exports = {
     handler: async function (request, h) {
         const { appkey } = request.headers;
         const { payload } = request;
-        const { periodicalId, bookId, comment } = payload;
+        const { type, id, comment } = payload;
         const Comment = mongoose.model('Comment');
         const data = {
+            type,
+            id,
             comment,
             userId: appkey,
         }
-        if(periodicalId) data.periodicalId = periodicalId;
-        else if(bookId) data.bookId = bookId;
-        else throw Boom.badData('periodicalId and bookId both missing');
+        if (!type || type!=='book' || type !== 'periodical') throw Boom.badData('type mast be on of book and periodical');
         if(!comment) throw Boom.badData('plase write something');
-        console.log(data);
         await Comment.create(data);
         return h.success()
     }

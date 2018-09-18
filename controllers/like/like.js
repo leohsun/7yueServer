@@ -6,14 +6,14 @@ module.exports = {
     handler: async function (request, h) {
         const { appkey } = request.headers;
         const { payload } = request;
-        const { periodicalId, bookId } = payload;
+        const { id, type } = payload;
         const Like = mongoose.model('Like');
         const data = {
+            id,
+            type,
             userId: appkey,
         }
-        if(periodicalId) data.periodicalId = periodicalId;
-        else if(bookId) data.bookId = bookId;
-        else throw Boom.badData('periodicalId and bookId both missing');
+        if (!type || type!=='book' || type !== 'periodical') throw Boom.badData('type mast be on of book and periodical');
         const isExist = await Like.find(data);
         if (isExist.length) {
             throw Boom.conflict('duplicated opration!!')

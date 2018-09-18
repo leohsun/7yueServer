@@ -3,8 +3,8 @@ var Schema = Mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
 var commentSchema = new Schema({
     userId: String,
-    bookID: ObjectId,
-    periodicalId: ObjectId,
+    id: ObjectId,
+    type: String,
     comment: String,
     meta: {
         createAt: {

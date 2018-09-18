@@ -3,9 +3,12 @@ var Schema = Mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
 
 var LikeSchema = new Schema({
-    bookId: ObjectId,
+    id: ObjectId,
     userId: String,
-    periodicalId: ObjectId,
+    type: {
+        type: String,
+        required: true,
+    },
     meta: {
         createAt: {
             type: Date,
