@@ -11,6 +11,7 @@ var PeriodicalShchema = new Schema({
     },
     image: String,
     index: Number,
+    source: String,
     meta: {
         createAt: {
             type: Date,
