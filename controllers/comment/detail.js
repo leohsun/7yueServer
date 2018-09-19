@@ -2,21 +2,19 @@ var mongoose = require('mongoose');
 var objectId = mongoose.Types.objectId;
 var Boom = require('boom');
 module.exports = {
-    description: 'get comment api',
+    description: 'get comment detail api',
     handler: async function (request, h) {
         const { appkey } = request.headers;
         const { payload } = request;
-        let { periodicalId, bookId, page, size } = payload;
-        if(!page) page = 1;
-        if(!size) size = 2;
+        let { type, id, page, size } = payload;
+        if (!type || (type !== 'book' && type !== 'periodical')) throw Boom.badData('type mast be on of book and periodical');
+        if (!page) page = 1;
+        if (!size) size = 2;
         const Comment = mongoose.model('Comment');
-        const data = {};
-        if (periodicalId) data.periodicalId = periodicalId;
-        else if (bookId) data.bookId = bookId;
-        else throw Boom.badData('periodicalId and bookId both missing');
+        const query = { type, id };
         const skip = (page - 1) * size;
-        const comment_list = await Comment.find(data).skip(skip).limit(size);
-        const total = await Comment.find(data).countDocuments();
+        const comment_list = await Comment.find(query).skip(skip).limit(size);
+        const total = await Comment.find(query).countDocuments();
         const hasMore = skip + size < total
         const res = {
             page,

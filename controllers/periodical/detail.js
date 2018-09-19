@@ -13,8 +13,8 @@ module.exports = {
         const previours = await Periodical.findOne({ index: preIdx });
         const next = await Periodical.findOne({ index: nextIdx });
         const Like = mongoose.model('Like');
-        const fav_nums = await Like.find({ periodicalId: _id }).countDocuments();
-        const like_status = await Like.find({ '$and': [{ periodicalId: _id }, { userId }] }).countDocuments();
+        const fav_nums = await Like.find({ type: 'periodical', id: _id}).countDocuments();
+        const like_status = await Like.find({type: 'periodical', id: _id , userId }).countDocuments();
         const data = {
             data: { type, content, index, title, image, fav_nums, like_status, previours, next, source }
         }
