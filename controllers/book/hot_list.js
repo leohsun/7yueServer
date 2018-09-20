@@ -57,9 +57,9 @@ module.exports = {
                     }
                 }
 
-                const { _id, title, author, cover, summary } = item;
+                const { _id, title, author, cover } = item;
 
-                return { _id, title, author, cover, summary, fav_nums, comment_nums };
+                return { _id, title, author, cover, fav_nums, comment_nums };
             })
             data.data = docswidthfavnums;
 
