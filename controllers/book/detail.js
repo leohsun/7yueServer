@@ -26,12 +26,11 @@ module.exports = {
             }
         }
         bookdocs = await Book.findOne({ _id: id });
-        const data = {}
+        const data = {data: null}
         if (bookdocs) {
             const { _id, title, author, cover, summary } = bookdocs;
-            data = {
-                data: { _id, title, author, cover, summary,fav_nums }
-            }
+            data.data = { _id, title, author, cover, summary,fav_nums }
+            
         }
 
         return h.success(data)
