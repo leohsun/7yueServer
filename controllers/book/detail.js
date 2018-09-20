@@ -5,7 +5,7 @@ module.exports = {
     description: 'book detail api',
     handler: async function (request, h) {
         const { id } = request.url.query;
-        if(!ObjectId.isValid(id)) throw Boom.badData('id must be an ObjectId string');
+        if(!id || !ObjectId.isValid(id)) throw Boom.badData('id must be an ObjectId string');
         const Like = mongoose.model('Like');
         const Book = mongoose.model('Book');
         const hot_raw = await Like.aggregate([
