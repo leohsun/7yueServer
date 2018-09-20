@@ -26,7 +26,7 @@ module.exports = {
             }
         }
         bookdocs = await Book.findOne({ _id: id });
-        const { _id, title, author, cover, summary } = bookdocs;
+        const { _id, title, author, cover, summary } = bookdocs || {};
         const data = {
             data: { _id, title, author, cover, summary,fav_nums }
         }
