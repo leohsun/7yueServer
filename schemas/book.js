@@ -17,6 +17,7 @@ var bookSchema = new Schema({
     title: String,
     author: String,
     cover: String,
+    publisher: String,
     producer:String,
     raw_bookname:String,
     translotor: String,
