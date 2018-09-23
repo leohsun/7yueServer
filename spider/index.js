@@ -1,71 +1,101 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
-(async () => {
+
+; (async () => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    await page.goto('https://list.jd.com/list.html?cat=1713,3287&ev=1000000002_5&sort=sort_rank_asc&trans=1&JL=3_%E5%AE%A2%E6%88%B7%E8%AF%84%E5%88%86_5%E6%98%9F#J_crumbsBar');
 
-    //   1. get the links list
-    const links = await page.evaluate(() => {
-        const as = document.querySelectorAll('.gl-item .p-img a');
-        const links = []
-        as.forEach(el => {
-            links.push(el.href)
-        });
-        return links;
-    })
-    console.log(links)
 
-    // 2. get info from each links
-    const total = links.length;
+    // #1 1-4 #5 5-8 #9 9-12 #13 13-16 #17
 
-    const infoArr = []
-
-    async function getInfoIt(idx) {
-        console.log(`正在获取第 ${idx + 1} 的数据,还剩 ${total - idx - 1} 条!`)
-        await page.goto(links[idx]);
-        const info = await page.evaluate(() => {
-            const ttag = document.querySelector('#spec-n1 img')
-            const title = ttag.alt;
-            const cover = ttag.src;
-            aTag = document.querySelector('#p-author')
-            const author = aTag && aTag.innerText;
-
-            const metaTag = document.querySelectorAll('#parameter2 li');
-            let publishMeta = ''
-            metaTag.forEach( el => {
-                publishMeta += '|' + el.innerText;
-            })
-
-            const cTag = document.querySelector('#detail-tag-id-3 .book-detail-content');
-            const summary = cTag && cTag.innerText;
-
-            return {
-                title, author, cover, summary, publishMeta,
-            }
+    function sleep(time = 0) {
+        return new Promise(res => {
+            console.log(`****等待${time}秒****`)
+            setTimeout(() => {
+                res();
+            }, time * 1000)
         })
-        infoArr.push(info);
-        if (++idx >= total) {
-            return console.log(`数据获取完成，共获取${total}条数据`);
-        }
-        console.log(`获取第 ${idx} 的数据完成!`)
-        await getInfoIt(idx);
 
     }
+    // fist get links from list page
+    async function getLinks(idx = 0, linksArr = []) {
+        const hashArr = [1, 5, 9, 13, 17];
+        let hash = hashArr[idx];
+        console.log(linksArr.length)
+        if (hash) {
+            console.log(`----正在获取第${idx + 1}页数据,还剩余${hashArr.length - idx - 1}页数据----`)
+            await page.goto(`https://book.douban.com/annual/2017?source=navigation#${hash}`);
+            await sleep(2);
+            const links = await page.evaluate(() => {
+                const as = document.querySelectorAll('._2QqFD ._1lEyo');
+                const links = Array.prototype.map.call(as, (item => item.href))
+                return links
+            })
+            return getLinks(++idx, linksArr.concat(links))
+        } else {
+            console.log(`----爬取完成，共爬取${idx}页数据,${linksArr.length}条----`)
+            return linksArr;
+        }
+    }
 
-    await getInfoIt(0);
+    // second to fetch data from each links
 
-    console.log('____数据抓取完成，正在写入文件...',);
+    console.log('------开始爬取详情数据------');
+    async function fetchData(linksArr = [], idx = 0, result = []) {
+        console.log(`----正在获取第${idx + 1}页详情数据,还剩余${linksArr.length - idx - 1}页数据----`)
+        await page.goto(linksArr[idx]);
+        const bookInfo = await page.evaluate(() => {
+            const title = document.querySelector('h1').innerText.trim();
+            const img = document.querySelector('.nbg img').src;
+            const metaStrArr = document.querySelector('#info').innerText.trim().split('\n');
+            const keyMap = {
+                "作者": "author",
+                "出版社": "publisher",
+                "出品方": "producer",
+                "原作名": "raw_bookname",
+                "译者": "translotor",
+                "出版年": "pub_year",
+                "页数": "total",
+                "定价": "price",
+                "装帧": "binding_layout",
+                "丛书": "categroy",
+                "ISBN": "ISBN"
+            }
+            const str2obj = function (str) {
+                const keyvalArr = str.split(/:|：/);
+                const key = keyMap[keyvalArr[0].trim()];
+                const val = keyvalArr[1];
+                return { [key]: val.trim() }
+            }
+            const metaObj = metaStrArr.reduce((pre, next) => {
+                if (typeof pre === "string") {  // first  patch
+                    pre = str2obj(pre)
+                }
+                return { ...pre, ...str2obj(next) }
+            })
+            return { title, img, ...metaObj };
+        });
+        const len = linksArr.length
+        const index = idx + 1
+        if (index < len) {
+            result.push(bookInfo); // push will return the item that was pushed not the whole arrary
+            return fetchData(linksArr, index, result);
+        }
+        else {
+            console.log(`----爬取完成，共爬取${linksArr.length}条数据----`)
+            return result
+        }
+    }
+
+    const links = await getLinks();
+    const data = await fetchData(links);
+    console.log('---- 开始写入硬盘 ----');
+    const pt = path.resolve(__dirname, `./douban_book.json`)
+    console.log('---- 写入硬盘完成 ----');
+    await fs.writeFile(pt, JSON.stringify(data))
 
     await browser.close();
+    process.exit();
 
-    const p = path.resolve(__dirname, './bookData.json');
-    await fs.writeFile(p,JSON.stringify(infoArr))
-
-    console.log('____写入文件完成...,path: ' + p);
-    process.on('unhandledRejection', (err) => {
-        console.error(err);
-        process.exit(1);
-    })
-})();
+})()

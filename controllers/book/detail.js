@@ -30,7 +30,6 @@ module.exports = {
         if (bookdocs) {
             const { _id, title, author, cover, summary } = bookdocs;
             data.data = { _id, title, author, cover, summary,fav_nums }
-            
         }
 
         return h.success(data)
