@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var Boom = require('boom');
-const boodData = require('../spider/bookData.json');
+const boodData = require('../spider/douban_book.json');
 const periodicalData = require('../spider/periodical.json');
 module.exports = {
     description: 'init mongodb data  api',

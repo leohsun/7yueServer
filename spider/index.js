@@ -47,7 +47,8 @@ const path = require('path');
         await page.goto(linksArr[idx]);
         const bookInfo = await page.evaluate(() => {
             const title = document.querySelector('h1').innerText.trim();
-            const img = document.querySelector('.nbg img').src;
+            const cover = document.querySelector('.nbg img').src;
+            const summary = document.querySelector('.hidden .intro') ? document.querySelector('.hidden .intro').innerText : document.querySelector('.intro').innerText;
             const metaStrArr = document.querySelector('#info').innerText.trim().split('\n');
             const keyMap = {
                 "作者": "author",
@@ -60,7 +61,7 @@ const path = require('path');
                 "定价": "price",
                 "装帧": "binding_layout",
                 "丛书": "categroy",
-                "ISBN": "ISBN"
+                "ISBN": "isbn"
             }
             const str2obj = function (str) {
                 const keyvalArr = str.split(/:|：/);
@@ -74,7 +75,7 @@ const path = require('path');
                 }
                 return { ...pre, ...str2obj(next) }
             })
-            return { title, img, ...metaObj };
+            return { title, cover, summary, ...metaObj };
         });
         const len = linksArr.length
         const index = idx + 1
