@@ -13,14 +13,12 @@ module.exports = {
                 $match: { type: 'book' }
             }, {
                 $group: { _id: '$id', total: { '$sum': 1 } }
-            }, {
-                $sort: { total: -1 }
             }
         ]);
 
         let fav_nums = 0;
         for (let i =0, len = hot_raw.length; i < len; i++) {
-            if(hot_raw[i]._id === id) {
+            if(hot_raw[i]._id.toString() === id) {
                 fav_nums = hot_raw[i].total
                 break;
             }
