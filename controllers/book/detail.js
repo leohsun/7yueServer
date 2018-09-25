@@ -5,7 +5,7 @@ module.exports = {
     description: 'book detail api',
     handler: async function (request, h) {
         const { id } = request.url.query;
-        if(!id || !ObjectId.isValid(id)) throw Boom.badData('id must be an ObjectId string');
+        if (!id || !ObjectId.isValid(id)) throw Boom.badData('id must be an ObjectId string');
         const Like = mongoose.model('Like');
         const Book = mongoose.model('Book');
         const hot_raw = await Like.aggregate([
@@ -17,16 +17,16 @@ module.exports = {
         ]);
 
         let fav_nums = 0;
-        for (let i =0, len = hot_raw.length; i < len; i++) {
-            if(hot_raw[i]._id.toString() === id) {
+        for (let i = 0, len = hot_raw.length; i < len; i++) {
+            if (hot_raw[i]._id.toString() === id) {
                 fav_nums = hot_raw[i].total
                 break;
             }
         }
         bookdocs = await Book.findOne({ _id: id });
-        const like_status = await Like.find({type: 'book', id});
-        const data = {data: null}
-        if (bookdocs) data.data = {...bookdocs._doc,fav_nums,like_status:Boolean(like_status)};
+        const like_status = await Like.find({ type: 'book', id });
+        const data = { data: null }
+        if (bookdocs) data.data = { ...bookdocs._doc, fav_nums, like_status: like_status.length > 0 };
 
         return h.success(data)
     }
