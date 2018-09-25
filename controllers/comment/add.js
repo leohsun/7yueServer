@@ -14,7 +14,7 @@ module.exports = {
             comment,
             userId: appkey,
         }
-        if (!type || type!=='book' || type !== 'periodical') throw Boom.badData('type mast be on of book and periodical');
+        if (!type || ( type!=='book' && type !== 'periodical')) throw Boom.badData('type mast be one of book and periodical');
         if(!comment) throw Boom.badData('plase write something');
         await Comment.create(data);
         return h.success()
