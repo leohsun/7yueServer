@@ -4,6 +4,7 @@ var ObjectId = mongoose.Types.ObjectId;
 module.exports = {
     description: 'book detail api',
     handler: async function (request, h) {
+        const { appkey } = request.headers;
         const { id } = request.url.query;
         if (!id || !ObjectId.isValid(id)) throw Boom.badData('id must be an ObjectId string');
         const Like = mongoose.model('Like');
@@ -24,7 +25,7 @@ module.exports = {
             }
         }
         bookdocs = await Book.findOne({ _id: id });
-        let like_status = await Like.find({ type: 'book', id });
+        let like_status = await Like.find({ type: 'book', id, userId: appkey });
         const data = { data: null }
         if (bookdocs) data.data = { ...bookdocs._doc, fav_nums, like_status: like_status.length > 0 };
 
