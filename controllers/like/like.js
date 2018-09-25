@@ -13,7 +13,7 @@ module.exports = {
             type,
             userId: appkey,
         }
-        if (!type || type!=='book' || type !== 'periodical') throw Boom.badData('type mast be on of book and periodical');
+        if (!type || (type!=='book' && type !== 'periodical')) throw Boom.badData('type mast be on of book and periodical');
         const isExist = await Like.find(data);
         if (isExist.length) {
             throw Boom.conflict('duplicated opration!!')

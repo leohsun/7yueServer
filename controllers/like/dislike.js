@@ -13,7 +13,7 @@ module.exports = {
             id,
             userId: appkey,
         }
-        if (!type || type!=='book' || type !== 'periodical') throw Boom.badData('type mast be on of book and periodical');
+        if (!type || (type!=='book' && type !== 'periodical')) throw Boom.badData('type mast be on of book and periodical');
         await Like.remove(data);
         return h.success()
     }
