@@ -24,8 +24,9 @@ module.exports = {
             }
         }
         bookdocs = await Book.findOne({ _id: id });
+        const like_status = await Like.find({type: 'book', id});
         const data = {data: null}
-        if (bookdocs) data.data = {...bookdocs._doc,fav_nums};
+        if (bookdocs) data.data = {...bookdocs._doc,fav_nums,like_status:Boolean(like_status)};
 
         return h.success(data)
     }
